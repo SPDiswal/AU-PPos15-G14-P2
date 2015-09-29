@@ -4,10 +4,29 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World, PositioningActivity"
-            />
+    <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:id="@+id/timeReporter" android:checked="false" android:onClick="onChoosingReporter"/>
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Distance"
+                android:id="@+id/distanceReporter" android:checked="false" android:onClick="onChoosingReporter"/>
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Speed"
+                android:id="@+id/speedReporter" android:checked="false" android:onClick="onChoosingReporter"/>
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Motion"
+                android:id="@+id/motionReporter" android:checked="false" android:onClick="onChoosingReporter"/>
+    </RadioGroup>
 </LinearLayout>
 
