@@ -11,15 +11,16 @@ public class TimeReporter implements Reporter
     private static final String GPS = LocationManager.GPS_PROVIDER;
     
     private final int timeInterval;
+    private final LocationManager locationManager;
+    private final LocationListener listener;
     
-    public TimeReporter(final int timeInterval /* seconds */)
+    public TimeReporter(final LocationManager locationManager,
+                        final Logger logger,
+                        final int timeInterval /* seconds */)
     {
         this.timeInterval = 1000 * timeInterval;
-    }
-    
-    public void listenForUpdates(final LocationManager locationManager, final Logger logger)
-    {
-        locationManager.requestLocationUpdates(GPS, timeInterval, 0, new LocationListener()
+        this.locationManager = locationManager;
+        this.listener = new LocationListener()
         {
             public void onLocationChanged(final Location location)
             {
@@ -37,6 +38,16 @@ public class TimeReporter implements Reporter
             public void onProviderDisabled(final String provider)
             {
             }
-        });
+        };
+    }
+    
+    public void listenForUpdates()
+    {
+        locationManager.requestLocationUpdates(GPS, timeInterval, 0, listener);
+    }
+    
+    public void stopListeningForUpdates()
+    {
+        locationManager.removeUpdates(listener);
     }
 }
