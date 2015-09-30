@@ -10,27 +10,39 @@ router.get("/", function (request, response, next)
     var reporter = request.params.reporter;
     var logFilename = logFilenamePrefix + reporter + logFilenameSuffix;
     
-    file.readFile(logFilename, "utf8", function (error, data)
+    //console.log("-> Incoming GET request: " + JSON.stringify(request.params));
+    
+    file.exists(logFilename, function (exists)
     {
-        if (error)
+        if (exists)
         {
-            throw error;
+            file.readFile(logFilename, "utf8", function (error, data)
+            {
+                if (error)
+                {
+                    throw error;
+                }
+                else
+                {
+                    var lines = data.split("\n");
+                    var output = kmlStart();
+                    
+                    for (var i in lines)
+                    {
+                        if (lines[i] !== "")
+                        {
+                            output += kmlElement(JSON.parse(lines[i]));
+                        }
+                    }
+                    
+                    output += kmlEnd();
+                    response.header("Content-Type", "text/xml").send(output);
+                }
+            });
         }
         else
         {
-            var lines = data.split("\n");
-            var output = kmlStart();
-            
-            for (var i in lines)
-            {
-                if (lines[i] !== "")
-                {
-                    output += kmlElement(JSON.parse(lines[i]));
-                }
-            }
-            
-            output += kmlEnd();
-            response.header("Content-Type", "text/xml").send(output);
+            response.sendStatus(404);
         }
     });
 });
@@ -42,6 +54,8 @@ router.post("/", function (request, response, next)
     var altitude = request.body.altitude;
     var time = request.body.time;
     var reporter = request.params.reporter;
+    
+    //console.log("-> Incoming POST request (" + reporter + "): " + JSON.stringify(request.body));
     
     if (!latitude || !longitude || !altitude || !time || !reporter)
     {

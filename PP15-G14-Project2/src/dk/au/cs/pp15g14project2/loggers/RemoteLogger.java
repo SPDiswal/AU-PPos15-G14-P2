@@ -30,9 +30,9 @@ public class RemoteLogger implements Logger
                           + "\"altitude\":\"" + tokens[3] + "\","
                           + "\"time\":\"" + tokens[0] + "\""
                           + "}";
-    
+            
             BufferedWriter writer = null;
-    
+            
             try
             {
                 String remotePath = REMOTE_PATH_PREFIX + tag + "/";
@@ -40,14 +40,16 @@ public class RemoteLogger implements Logger
         
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
-        
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                
                 writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
                 writer.write(json);
                 writer.flush();
-        
+                
                 int statusCode = connection.getResponseCode();
-        
-                if (statusCode != 204) Log.w(tag, "Cannot post to remote server.");
+                
+                if (statusCode != 204) Log.w(tag, "Remote server responded with status code " + statusCode);
             }
             catch (IOException e)
             {
@@ -61,7 +63,7 @@ public class RemoteLogger implements Logger
                 }
                 catch (IOException e)
                 {
-                    Log.w(tag, "Cannot post to remote server.");
+                    Log.w(tag, "Cannot close connection to remote server.");
                 }
             }
     

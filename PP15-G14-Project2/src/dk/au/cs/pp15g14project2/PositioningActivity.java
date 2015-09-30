@@ -24,7 +24,7 @@ public class PositioningActivity extends Activity
         
         this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         this.sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-    
+        
         this.logger = new CompositeLogger();
         this.logger.add(new ConsoleLogger());
         this.logger.add(new FileLogger());
