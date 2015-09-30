@@ -12,39 +12,19 @@ public class MotionReporter implements Reporter
     private static final String GPS = LocationManager.GPS_PROVIDER;
     
     private final SensorManager sensorManager;
+    private final LocationManager locationManager;
     private final int distanceInterval;
+    private LocationListener listener;
     
-    public MotionReporter(SensorManager sensorManager, int distanceInterval)
+    public MotionReporter(final SensorManager sensorManager,
+                          final LocationManager locationManager,
+                          final Logger logger,
+                          int distanceInterval)
     {
-        this.sensorManager = sensorManager;
         this.distanceInterval = distanceInterval;
-    }
-    
-    public void listenForUpdates(final LocationManager locationManager, final Logger logger)
-    {
-        // TODO Get speed estimate (e.g. by retrieving three GPS fixes initially and using location.getSpeed()).
-        
-        Sensor linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-    
-        // TODO Listen for motion changes with linear acceleration and derive acceleration (m/s^2).
-        
-        sensorManager.registerListener(new SensorEventListener()
-        {
-            public void onSensorChanged(SensorEvent event)
-            {
-                throw new UnsupportedOperationException();
-            }
-            
-            public void onAccuracyChanged(Sensor sensor, int accuracy)
-            {
-                throw new UnsupportedOperationException();
-            }
-        }, linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        
-        // TODO Derive 'optimal' time and distance interval from speed and acceleration.
-        // TODO Listen for position changes until deceleration.
-        
-        locationManager.requestLocationUpdates(GPS, 0, 0, new LocationListener()
+        this.sensorManager = sensorManager;
+        this.locationManager = locationManager;
+        this.listener = new LocationListener()
         {
             public void onLocationChanged(final Location location)
             {
@@ -64,6 +44,38 @@ public class MotionReporter implements Reporter
             public void onProviderDisabled(final String provider)
             {
             }
-        });
+        };
+    }
+    
+    public void listenForUpdates()
+    {
+        // TODO Get speed estimate (e.g. by retrieving three GPS fixes initially and using location.getSpeed()).
+        
+        Sensor linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        
+        // TODO Listen for motion changes with linear acceleration and derive acceleration (m/s^2).
+        
+        sensorManager.registerListener(new SensorEventListener()
+        {
+            public void onSensorChanged(SensorEvent event)
+            {
+                throw new UnsupportedOperationException();
+            }
+            
+            public void onAccuracyChanged(Sensor sensor, int accuracy)
+            {
+                throw new UnsupportedOperationException();
+            }
+        }, linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        
+        // TODO Derive 'optimal' time and distance interval from speed and acceleration.
+        // TODO Listen for position changes until deceleration.
+        
+        locationManager.requestLocationUpdates(GPS, 0, 0, listener);
+    }
+    
+    public void stopListeningForUpdates()
+    {
+        locationManager.removeUpdates(listener);
     }
 }
