@@ -28,6 +28,7 @@ public class PositioningActivity extends Activity
         this.logger = new CompositeLogger();
         this.logger.add(new ConsoleLogger());
         this.logger.add(new FileLogger());
+        this.logger.add(new RemoteLogger());
         
         setContentView(R.layout.main);
     }

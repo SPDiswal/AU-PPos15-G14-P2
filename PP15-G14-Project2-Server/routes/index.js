@@ -1,11 +1,15 @@
 var express = require("express");
-var router = express.Router();
+var router = express.Router({mergeParams: true});
 var file = require("fs");
 
-var logFilename = __dirname + "/../public/pp15-g14-project2.log";
+var logFilenamePrefix = __dirname + "/../public/pp15-g14-project2-";
+var logFilenameSuffix = ".log";
 
 router.get("/", function (request, response, next)
 {
+    var reporter = request.params.reporter;
+    var logFilename = logFilenamePrefix + reporter + logFilenameSuffix;
+    
     file.readFile(logFilename, "utf8", function (error, data)
     {
         if (error)
@@ -37,8 +41,9 @@ router.post("/", function (request, response, next)
     var longitude = request.body.longitude;
     var altitude = request.body.altitude;
     var time = request.body.time;
+    var reporter = request.params.reporter;
     
-    if (!latitude || !longitude || !altitude || !time)
+    if (!latitude || !longitude || !altitude || !time || !reporter)
     {
         response.sendStatus(400);
     }
@@ -51,10 +56,10 @@ router.post("/", function (request, response, next)
             time:      time
         };
         
+        var logFilename = logFilenamePrefix + reporter + logFilenameSuffix;
+        
         file.appendFile(logFilename, JSON.stringify(output) + "\n", function ()
         {
-            console.log("Wrote to " + __dirname + "/public/pp15-g14-project2.log");
-            
             response.sendStatus(204);
         });
     }
