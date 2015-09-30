@@ -3,6 +3,7 @@ package dk.au.cs.pp15g14project2.reporters;
 import android.location.*;
 import android.os.Bundle;
 import dk.au.cs.pp15g14project2.loggers.Logger;
+import dk.au.cs.pp15g14project2.utilities.LocationPrinter;
 
 public class SpeedReporter implements Reporter
 {
@@ -15,7 +16,7 @@ public class SpeedReporter implements Reporter
     public SpeedReporter(final int distanceInterval /* metres */, final int maximumSpeed /* metres per second */)
     {
         if (maximumSpeed <= 0)
-            throw new IllegalArgumentException("maximumSpeed must be greater than 0.");
+        { throw new IllegalArgumentException("maximumSpeed must be greater than 0."); }
         
         this.distanceInterval = distanceInterval;
         this.derivedTimeInterval = (int) (1000 * Math.ceil(distanceInterval / maximumSpeed));
@@ -27,7 +28,7 @@ public class SpeedReporter implements Reporter
         {
             public void onLocationChanged(final Location location)
             {
-                logger.log(TAG, location);
+                logger.log(TAG, LocationPrinter.convertToString(location));
             }
             
             public void onStatusChanged(final String provider, final int status, final Bundle extras)

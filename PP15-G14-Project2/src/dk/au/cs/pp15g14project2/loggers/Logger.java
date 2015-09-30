@@ -4,5 +4,5 @@ import android.location.Location;
 
 public interface Logger
 {
-    void log(String tag, Location location);
+    void log(String tag, String message);
 }

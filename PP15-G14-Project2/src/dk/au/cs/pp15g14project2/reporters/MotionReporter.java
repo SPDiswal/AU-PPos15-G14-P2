@@ -4,6 +4,7 @@ import android.hardware.*;
 import android.location.*;
 import android.os.Bundle;
 import dk.au.cs.pp15g14project2.loggers.Logger;
+import dk.au.cs.pp15g14project2.utilities.LocationPrinter;
 
 public class MotionReporter implements Reporter
 {
@@ -47,7 +48,7 @@ public class MotionReporter implements Reporter
         {
             public void onLocationChanged(final Location location)
             {
-                logger.log(TAG, location);
+                logger.log(TAG, LocationPrinter.convertToString(location));
                 
                 locationManager.removeUpdates(this);
             }

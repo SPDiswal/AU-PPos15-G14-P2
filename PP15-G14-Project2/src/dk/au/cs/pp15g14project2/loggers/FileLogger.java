@@ -42,8 +42,8 @@ public class FileLogger implements Logger
             Log.w(tag, "Cannot write to external storage.");
     }
     
-    public void log(final String tag, final Location location)
+    public void log(final String tag, final String location)
     {
-        writeToFile(tag, location.toString());
+        writeToFile(tag, location);
     }
 }

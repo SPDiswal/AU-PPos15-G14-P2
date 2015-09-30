@@ -13,7 +13,7 @@ public class CompositeLogger implements Logger
         loggers.add(logger);
     }
     
-    public void log(final String tag, final Location location)
+    public void log(final String tag, final String location)
     {
         for (Logger logger : loggers)
         {
