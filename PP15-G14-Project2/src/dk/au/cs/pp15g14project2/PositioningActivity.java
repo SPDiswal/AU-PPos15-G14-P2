@@ -2,13 +2,20 @@ package dk.au.cs.pp15g14project2;
 
 import android.app.Activity;
 import android.content.Context;
-import android.hardware.*;
+import android.hardware.SensorManager;
 import android.location.LocationManager;
-import android.os.Bundle;
+import android.os.*;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import dk.au.cs.pp15g14project2.loggers.*;
 import dk.au.cs.pp15g14project2.reporters.*;
+import org.json.*;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public class PositioningActivity extends Activity
 {
@@ -16,6 +23,11 @@ public class PositioningActivity extends Activity
     private LocationManager locationManager;
     private SensorManager sensorManager;
     private CompositeLogger logger;
+    
+    private Queue<Waypoint> waypoints;
+    private List<Waypoint> finishedWaypoints;
+    
+    private static final String WAYPOINTS_PATH = "http://178.62.198.99:3000/waypoints.json";
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -29,6 +41,8 @@ public class PositioningActivity extends Activity
         this.logger.add(new ConsoleLogger());
         this.logger.add(new FileLogger());
         this.logger.add(new RemoteLogger());
+        
+        new WaypointTask().execute();
         
         setContentView(R.layout.main);
     }
@@ -76,7 +90,130 @@ public class PositioningActivity extends Activity
                 }
                 break;
         }
-    
+        
         if (reporter != null) reporter.listenForUpdates();
+    }
+    
+    private class WaypointTask extends AsyncTask<Void, Void, Queue<Waypoint>>
+    {
+        private static final String TAG = "WaypointTask";
+        
+        public Queue<Waypoint> doInBackground(Void... input)
+        {
+            BufferedReader reader = null;
+            Queue<Waypoint> waypoints = new LinkedList<Waypoint>();
+            
+            try
+            {
+                URL url = new URL(WAYPOINTS_PATH);
+                
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                
+                int statusCode = connection.getResponseCode();
+                
+                if (statusCode != 200)
+                {
+                    Log.w(TAG, "Remote server responded with status code " + statusCode);
+                }
+                else
+                {
+                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    StringBuilder builder = new StringBuilder();
+                    String line;
+                    
+                    while ((line = reader.readLine()) != null)
+                    {
+                        builder.append(line).append("\n");
+                    }
+                    
+                    JSONArray jsonWaypoints = new JSONArray(builder.toString());
+                    
+                    for (int i = 0; i < jsonWaypoints.length(); i++)
+                    {
+                        JSONObject jsonWaypoint = jsonWaypoints.getJSONObject(i);
+                        String name = jsonWaypoint.getString("name");
+                        double latitude = jsonWaypoint.getDouble("latitude");
+                        double longitude = jsonWaypoint.getDouble("longitude");
+                        
+                        if (i > 0 && i < jsonWaypoints.length() - 1)
+                        {
+                            waypoints.add(new Waypoint(name + " (ankomst)", latitude, longitude));
+                            waypoints.add(new Waypoint(name + " (afgang)", latitude, longitude));
+                        }
+                        else if (i == 0)
+                        {
+                            waypoints.add(new Waypoint(name + " (afgang)", latitude, longitude));
+                        }
+                        else
+                        {
+                            waypoints.add(new Waypoint(name + " (ankomst)", latitude, longitude));
+                        }
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Log.w(TAG, "Cannot get waypoints from remote server.");
+            }
+            catch (JSONException e)
+            {
+                Log.w(TAG, "Cannot get waypoints from remote server.");
+            }
+            finally
+            {
+                try
+                {
+                    if (reader != null) reader.close();
+                }
+                catch (IOException e)
+                {
+                    Log.w(TAG, "Cannot close connection to remote server.");
+                }
+            }
+            
+            return waypoints;
+        }
+        
+        public void onPostExecute(Queue<Waypoint> waypoints)
+        {
+            updateWaypoints(waypoints);
+        }
+    }
+    
+    public void updateWaypoints(Queue<Waypoint> waypoints)
+    {
+        this.waypoints = waypoints;
+        
+        TextView current = (TextView) findViewById(R.id.current);
+        current.setText("Loaded - not started yet");
+        
+        TextView next = (TextView) findViewById(R.id.next);
+        next.setText(waypoints.peek().getName());
+    }
+    
+    public void onClickingForNextWaypoint(View view)
+    {
+        Time timestamp = new Time();
+        timestamp.setToNow();
+    
+        timestamp.format("%H:%M:%S");
+    
+        if (!waypoints.isEmpty())
+        {
+            TextView current = (TextView) findViewById(R.id.current);
+            current.setText(waypoints.poll().getName());
+    
+            if (!waypoints.isEmpty())
+            {
+                TextView next = (TextView) findViewById(R.id.next);
+                next.setText(waypoints.peek().getName());
+            }
+            else
+            {
+                TextView next = (TextView) findViewById(R.id.next);
+                next.setText("Done");
+            }
+        }
     }
 }

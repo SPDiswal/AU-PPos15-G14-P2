@@ -2,6 +2,7 @@ package dk.au.cs.pp15g14project2.loggers;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import org.json.*;
 
 import java.io.*;
 import java.net.*;
@@ -23,33 +24,34 @@ public class RemoteLogger implements Logger
             String message = input[1];
             
             String[] tokens = message.split(" ");
-    
-            String json = "{"
-                          + "\"latitude\":\"" + tokens[1] + "\","
-                          + "\"longitude\":\"" + tokens[2] + "\","
-                          + "\"altitude\":\"" + tokens[3] + "\","
-                          + "\"time\":\"" + tokens[0] + "\""
-                          + "}";
-            
             BufferedWriter writer = null;
             
             try
             {
+                JSONObject json = new JSONObject().put("latitude", tokens[1])
+                                                  .put("longitude", tokens[2])
+                                                  .put("altitude", tokens[3])
+                                                  .put("time", tokens[0]);
+                
                 String remotePath = REMOTE_PATH_PREFIX + tag + "/";
                 URL url = new URL(remotePath);
-        
+                
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/json");
                 
                 writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-                writer.write(json);
+                writer.write(json.toString());
                 writer.flush();
                 
                 int statusCode = connection.getResponseCode();
                 
                 if (statusCode != 204) Log.w(tag, "Remote server responded with status code " + statusCode);
+            }
+            catch (JSONException e)
+            {
+                Log.w(tag, "Cannot post to remote server.");
             }
             catch (IOException e)
             {
@@ -66,7 +68,7 @@ public class RemoteLogger implements Logger
                     Log.w(tag, "Cannot close connection to remote server.");
                 }
             }
-    
+            
             return null;
         }
     }
