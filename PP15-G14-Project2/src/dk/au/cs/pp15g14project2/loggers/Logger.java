@@ -1,4 +1,4 @@
-package dk.au.cs.pp15g14project2;
+package dk.au.cs.pp15g14project2.loggers;
 
 import android.location.Location;
 

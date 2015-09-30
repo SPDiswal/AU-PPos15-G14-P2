@@ -1,10 +1,12 @@
-package dk.au.cs.pp15g14project2;
+package dk.au.cs.pp15g14project2.reporters;
 
 import android.location.*;
 import android.os.Bundle;
+import dk.au.cs.pp15g14project2.loggers.Logger;
 
 public class TimeReporter implements Reporter
 {
+    private static final String TAG = "TimeReporter";
     private static final String GPS = LocationManager.GPS_PROVIDER;
     
     private final int timeInterval;
@@ -20,7 +22,7 @@ public class TimeReporter implements Reporter
         {
             public void onLocationChanged(final Location location)
             {
-                logger.log(this.getClass().getName(), location);
+                logger.log(TAG, location);
             }
             
             public void onStatusChanged(final String provider, final int status, final Bundle extras)

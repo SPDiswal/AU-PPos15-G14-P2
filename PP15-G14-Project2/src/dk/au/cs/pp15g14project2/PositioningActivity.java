@@ -7,24 +7,22 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+import dk.au.cs.pp15g14project2.loggers.*;
+import dk.au.cs.pp15g14project2.reporters.*;
 
 public class PositioningActivity extends Activity
 {
     private Reporter reporter;
     private LocationManager locationManager;
-    
     private SensorManager sensorManager;
-    private Sensor linearAccelerationSensor;
     
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        
-        sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-        linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        this.sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
         
         setContentView(R.layout.main);
     }
@@ -65,12 +63,17 @@ public class PositioningActivity extends Activity
             case R.id.motionReporter:
                 if (isChecked)
                 {
-                    reporter = new MotionReporter();
+                    // TODO Allow variable distance interval.
+                    reporter = new MotionReporter(sensorManager, 10);
                     Toast.makeText(this, "Using motion reporting", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
         
-        reporter.listenForUpdates(locationManager, new ConsoleLogger());
+        CompositeLogger logger = new CompositeLogger();
+        logger.add(new ConsoleLogger());
+        logger.add(new FileLogger());
+        
+        reporter.listenForUpdates(locationManager, logger);
     }
 }
