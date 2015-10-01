@@ -2,6 +2,7 @@ package dk.au.cs.pp15g14project2.reporters;
 
 import android.location.*;
 import android.os.*;
+import android.util.Log;
 import dk.au.cs.pp15g14project2.loggers.Logger;
 import dk.au.cs.pp15g14project2.utilities.LocationPrinter;
 
@@ -14,6 +15,8 @@ public class TimeReporter implements Reporter
     private final LocationManager locationManager;
     private final LocationListener listener;
     
+    private boolean isRunning = false;
+    
     public TimeReporter(final LocationManager locationManager,
                         final Logger logger,
                         final int timeInterval /* seconds */)
@@ -24,16 +27,11 @@ public class TimeReporter implements Reporter
         {
             public void onLocationChanged(final Location location)
             {
-                logger.log(TAG, LocationPrinter.convertToString(location));
-                Handler handler = new Handler();
-                locationManager.removeUpdates(this);
-                handler.postDelayed(new Runnable()
+                if (isRunning)
                 {
-                    public void run()
-                    {
-                        locationManager.requestLocationUpdates(GPS, 0, 0, listener);
-                    }
-                }, TimeReporter.this.timeInterval);
+                    locationManager.removeUpdates(this);
+                    logger.log(TAG, LocationPrinter.convertToString(location));
+                }
             }
             
             public void onStatusChanged(final String provider, final int status, final Bundle extras)
@@ -52,12 +50,26 @@ public class TimeReporter implements Reporter
     
     public void startListeningForUpdates()
     {
-        locationManager.requestLocationUpdates(GPS, 0, 0, listener);
+        isRunning = true;
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable()
+        {
+            public void run()
+            {
+                if (isRunning)
+                {
+                    locationManager.requestLocationUpdates(GPS, 0, 0, listener);
+                    handler.postDelayed(this, timeInterval);
+                }
+            }
+        }, timeInterval);
+    
+        Log.e(TAG, "" + timeInterval);
     }
     
     public void stopListeningForUpdates()
     {
-        locationManager.removeUpdates(listener);
+        isRunning = false;
     }
     
     public String getTag()

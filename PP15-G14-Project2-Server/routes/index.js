@@ -92,7 +92,7 @@ function kmlElement(location)
            "\t<description>An interesting location</description>\n" + // TODO
            "\t<Point>\n" +
            "\t\t<coordinates>" +
-           location.latitude + "," + location.longitude + "," + location.altitude +
+           location.latitude + "," + location.longitude +
            "</coordinates>\n" +
            "\t</Point>\n" +
            "\t<TimeStamp>\n" +
