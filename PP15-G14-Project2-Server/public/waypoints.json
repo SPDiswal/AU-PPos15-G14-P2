@@ -8,56 +8,67 @@
   {
     "name": "Helsingforsgade (ud for Wiener/udkørsel fra Storcenter Nord)",
     "latitude": 56.171527,
-    "longitude": 10.189056
+    "longitude": 10.189056,
+    "altitude": 64
   },
   {
     "name": "Åbogade/Helsingforsgade (ud for Turing)",
     "latitude": 56.171734,
-    "longitude": 10.187873
+    "longitude": 10.187873,
+    "altitude": 64
   },
   {
     "name": "Åbogade (ud for Storcenter Nord)",
     "latitude": 56.171094,
-    "longitude": 10.187656
+    "longitude": 10.187656,
+    "altitude": 64
   },
   {
     "name": "Paludan-Müllers Vej (ud for udkørsel fra Storcenter Nord)",
     "latitude": 56.169848,
-    "longitude": 10.187640
+    "longitude": 10.187640,
+    "altitude": 64
   },
   {
     "name": "Paludan-Müllers Vej (lige ved indgangen til Storcenter Nord)",
     "latitude": 56.169269,
-    "longitude": 10.188493
+    "longitude": 10.188493,
+    "altitude": 64
   },
   {
     "name": "Paludan-Müllers Vej/Finlandsgade (ud for indgangen til Storcenter Nord)",
     "latitude": 56.169019,
-    "longitude": 10.188974
+    "longitude": 10.188974,
+    "altitude": 64
   },
   {
     "name": "Finlandsgade (ud for indgangen til Storcenter Nord)",
     "latitude": 56.169178,
-    "longitude": 10.189293
+    "longitude": 10.189293,
+    "altitude": 64
   },
   {
     "name": "Finlandsgade (ud for udkørsel fra Storcenter Nord)",
     "latitude": 56.169710,
-    "longitude": 10.189541
+    "longitude": 10.189541,
+    "altitude": 64
   },
   {
     "name": "Finlandsgade (ud for udkørsel/parkeringsplads ved Storcenter Nord over for eksamenslokalerne)",
     "latitude": 56.170360,
-    "longitude": 10.189840
+    "longitude": 10.189840,
+    "altitude": 64
   },
   {
     "name": "Finlandsgade (ud for udkørsel ved Storcenter Nord over for Dania Kollegiet)",
     "latitude": 56.170931,
-    "longitude": 10.190103
+    "longitude": 10.190103,
+    "altitude": 64
   },
   {
     "name": "Finlandsgade/Helsingforsgade (ud for Nygaard)",
     "latitude": 56.171331,
-    "longitude": 10.190196
+    "longitude": 10.190196,
+    "altitude": 64
   }
 ]

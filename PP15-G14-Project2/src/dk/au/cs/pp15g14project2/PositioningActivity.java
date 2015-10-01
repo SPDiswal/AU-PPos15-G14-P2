@@ -186,6 +186,7 @@ public class PositioningActivity extends Activity
     public void updateWaypoints(Queue<Waypoint> waypoints)
     {
         this.waypoints = waypoints;
+        this.finishedWaypoints = new ArrayList<Waypoint>();
         
         TextView current = (TextView) findViewById(R.id.mostRecent);
         current.setText("Loaded - not started yet");
@@ -199,11 +200,11 @@ public class PositioningActivity extends Activity
         Time timestamp = new Time();
         timestamp.setToNow();
         
-        waypoints.peek().setTimestamp(timestamp);
-        finishedWaypoints.add(waypoints.peek());
-        
         if (!waypoints.isEmpty())
         {
+            waypoints.peek().setTimestamp(timestamp);
+            finishedWaypoints.add(waypoints.peek());
+    
             TextView mostRecent = (TextView) findViewById(R.id.mostRecent);
             mostRecent.setText(waypoints.poll().getName());
             
