@@ -28,6 +28,14 @@
                 android:text="Motion"
                 android:id="@+id/motionReporter" android:checked="false" android:onClick="onChoosingReporter"/>
     </RadioGroup>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start!"
+            android:id="@+id/waypointButton" android:layout_gravity="center_horizontal"
+            android:onClick="onClickingForNextWaypoint"
+            android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -66,17 +74,5 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/blank3" android:layout_gravity="center_horizontal"/>
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" android:layout_gravity="bottom|center_horizontal">
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start!"
-                android:id="@+id/waypointButton" android:layout_gravity="center_horizontal"
-                android:onClick="onClickingForNextWaypoint"
-                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
-                android:layout_marginBottom="50dp"/>
-    </RelativeLayout>
 </LinearLayout>
 

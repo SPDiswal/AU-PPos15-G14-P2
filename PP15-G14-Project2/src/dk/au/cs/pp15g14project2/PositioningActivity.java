@@ -67,7 +67,7 @@ public class PositioningActivity extends Activity
                 if (isChecked)
                 {
                     // TODO Allow variable time interval.
-                    reporter = new TimeReporter(locationManager, logger, 5);
+                    reporter = new TimeReporter(locationManager, logger, 1);
                     Toast.makeText(this, "Using time reporting", Toast.LENGTH_LONG).show();
                 }
                 break;
@@ -76,7 +76,7 @@ public class PositioningActivity extends Activity
                 if (isChecked)
                 {
                     // TODO Allow variable distance interval.
-                    reporter = new DistanceReporter(locationManager, logger, 10);
+                    reporter = new DistanceReporter(locationManager, logger, 50);
                     Toast.makeText(this, "Using distance reporting", Toast.LENGTH_LONG).show();
                 }
                 break;
@@ -85,7 +85,7 @@ public class PositioningActivity extends Activity
                 if (isChecked)
                 {
                     // TODO Allow variable distance interval.
-                    reporter = new SpeedReporter(locationManager, logger, 10, 2);
+                    reporter = new SpeedReporter(locationManager, logger, 50, 2);
                     Toast.makeText(this, "Using speed reporting", Toast.LENGTH_LONG).show();
                 }
                 break;
@@ -94,7 +94,7 @@ public class PositioningActivity extends Activity
                 if (isChecked)
                 {
                     // TODO Allow variable distance interval.
-                    reporter = new MotionReporter(sensorManager, locationManager, logger, 10);
+                    reporter = new MotionReporter(sensorManager, locationManager, logger, 50);
                     Toast.makeText(this, "Using motion reporting", Toast.LENGTH_LONG).show();
                 }
                 break;

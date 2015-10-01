@@ -12,7 +12,7 @@ public class MotionReporter implements Reporter
     private static final String GPS = LocationManager.GPS_PROVIDER;
     
     private static final double GRAVITY = 9.81;
-    private static final int STEP_THRESHOLD = 2;
+    private static final int STEP_THRESHOLD = 3;
     private static final double STEP_LENGTH = 0.75;
     
     private final SensorManager sensorManager;
