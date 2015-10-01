@@ -1,6 +1,5 @@
 package dk.au.cs.pp15g14project2.loggers;
 
-import android.location.Location;
 import android.os.Environment;
 import android.util.Log;
 
@@ -8,42 +7,41 @@ import java.io.*;
 
 public class FileLogger implements Logger
 {
-    private static final String OUTPUT_FILENAME = "pp15-g14-project2.log";
-    private final File file;
+    private static final String OUTPUT_FILENAME_PREFIX = "pp15-g14-project2-";
+    private static final String OUTPUT_FILENAME_SUFFIX = ".log";
     
-    public FileLogger()
+    public void log(final String tag, final String location)
     {
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        file = new File(path, OUTPUT_FILENAME);
+        writeToFile(tag, location);
     }
     
-    public boolean isExternalStorageWritable()
+    private boolean isExternalStorageWritable()
     {
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
     }
     
-    public void writeToFile(final String tag, final String output)
+    private void writeToFile(final String tag, final String output)
     {
+        String outputFilename = OUTPUT_FILENAME_PREFIX + tag + OUTPUT_FILENAME_SUFFIX;
+        
         if (isExternalStorageWritable())
         {
             try
             {
+                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                File file = new File(path, outputFilename);
+                
                 FileWriter writer = new FileWriter(file, true);
-                writer.write(tag + " :: " + output + "\n");
+                writer.write(output + "\n");
                 writer.close();
             }
             catch (IOException e)
             {
-                Log.w(tag, "Cannot write to " + file, e);
+                Log.w(tag, "Cannot write to " + outputFilename, e);
             }
         }
         else
             Log.w(tag, "Cannot write to external storage.");
-    }
-    
-    public void log(final String tag, final String location)
-    {
-        writeToFile(tag, location);
     }
 }

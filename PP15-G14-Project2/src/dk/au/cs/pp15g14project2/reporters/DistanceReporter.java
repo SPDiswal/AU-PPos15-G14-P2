@@ -42,7 +42,7 @@ public class DistanceReporter implements Reporter
         };
     }
 
-    public void listenForUpdates()
+    public void startListeningForUpdates()
     {
         locationManager.requestLocationUpdates(GPS, FIXED_TIME_INTERVAL, distanceInterval, listener);
     }

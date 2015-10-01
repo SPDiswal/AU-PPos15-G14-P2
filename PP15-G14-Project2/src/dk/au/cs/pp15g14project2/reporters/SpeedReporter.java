@@ -46,7 +46,7 @@ public class SpeedReporter implements Reporter
         };
     }
     
-    public void listenForUpdates()
+    public void startListeningForUpdates()
     {
         locationManager.requestLocationUpdates(GPS, derivedTimeInterval, distanceInterval, listener);
     }

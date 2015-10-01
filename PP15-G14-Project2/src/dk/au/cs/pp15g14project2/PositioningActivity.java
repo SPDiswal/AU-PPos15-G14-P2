@@ -41,6 +41,7 @@ public class PositioningActivity extends Activity
         this.logger.add(new ConsoleLogger());
         this.logger.add(new FileLogger());
         this.logger.add(new RemoteLogger());
+        this.logger.add(new InMemoryProxyLogger());
         
         new WaypointTask().execute();
         
@@ -91,7 +92,7 @@ public class PositioningActivity extends Activity
                 break;
         }
         
-        if (reporter != null) reporter.listenForUpdates();
+        if (reporter != null) reporter.startListeningForUpdates();
     }
     
     private class WaypointTask extends AsyncTask<Void, Void, Queue<Waypoint>>
@@ -135,19 +136,20 @@ public class PositioningActivity extends Activity
                         String name = jsonWaypoint.getString("name");
                         double latitude = jsonWaypoint.getDouble("latitude");
                         double longitude = jsonWaypoint.getDouble("longitude");
+                        double altitude = jsonWaypoint.getDouble("altitude");
                         
                         if (i > 0 && i < jsonWaypoints.length() - 1)
                         {
-                            waypoints.add(new Waypoint(name + " (ankomst)", latitude, longitude));
-                            waypoints.add(new Waypoint(name + " (afgang)", latitude, longitude));
+                            waypoints.add(new Waypoint(name + " (ankomst)", latitude, longitude, altitude));
+                            waypoints.add(new Waypoint(name + " (afgang)", latitude, longitude, altitude));
                         }
                         else if (i == 0)
                         {
-                            waypoints.add(new Waypoint(name + " (afgang)", latitude, longitude));
+                            waypoints.add(new Waypoint(name + " (afgang)", latitude, longitude, altitude));
                         }
                         else
                         {
-                            waypoints.add(new Waypoint(name + " (ankomst)", latitude, longitude));
+                            waypoints.add(new Waypoint(name + " (ankomst)", latitude, longitude, altitude));
                         }
                     }
                 }
@@ -185,7 +187,7 @@ public class PositioningActivity extends Activity
     {
         this.waypoints = waypoints;
         
-        TextView current = (TextView) findViewById(R.id.current);
+        TextView current = (TextView) findViewById(R.id.mostRecent);
         current.setText("Loaded - not started yet");
         
         TextView next = (TextView) findViewById(R.id.next);
@@ -196,14 +198,15 @@ public class PositioningActivity extends Activity
     {
         Time timestamp = new Time();
         timestamp.setToNow();
-    
-        timestamp.format("%H:%M:%S");
-    
+        
+        waypoints.peek().setTimestamp(timestamp);
+        finishedWaypoints.add(waypoints.peek());
+        
         if (!waypoints.isEmpty())
         {
-            TextView current = (TextView) findViewById(R.id.current);
-            current.setText(waypoints.poll().getName());
-    
+            TextView mostRecent = (TextView) findViewById(R.id.mostRecent);
+            mostRecent.setText(waypoints.poll().getName());
+            
             if (!waypoints.isEmpty())
             {
                 TextView next = (TextView) findViewById(R.id.next);
@@ -213,6 +216,8 @@ public class PositioningActivity extends Activity
             {
                 TextView next = (TextView) findViewById(R.id.next);
                 next.setText("Done");
+                
+                
             }
         }
     }

@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Loading waypoints"
-            android:id="@+id/current" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/mostRecent" android:layout_gravity="center_horizontal"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

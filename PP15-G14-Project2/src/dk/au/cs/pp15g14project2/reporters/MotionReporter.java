@@ -47,7 +47,7 @@ public class MotionReporter implements Reporter
         };
     }
     
-    public void listenForUpdates()
+    public void startListeningForUpdates()
     {
         // TODO Get speed estimate (e.g. by retrieving three GPS fixes initially and using location.getSpeed()).
         
