@@ -27,9 +27,6 @@ public class DistanceReporter implements Reporter
             {
                 if (recentFix == null || location.distanceTo(recentFix) >= distanceThreshold)
                 {
-                    if (recentFix != null)
-                        Log.d(TAG, "" + location.distanceTo(recentFix));
-                    
                     recentFix = location;
                     logger.log(TAG, LocationPrinter.convertToString(location));
                 }
