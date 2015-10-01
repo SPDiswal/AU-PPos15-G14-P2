@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.*;
 import dk.au.cs.pp15g14project2.loggers.*;
 import dk.au.cs.pp15g14project2.reporters.*;
+import dk.au.cs.pp15g14project2.utilities.LocationPrinter;
 import org.json.*;
 
 import java.io.*;
@@ -19,15 +20,19 @@ import java.util.*;
 
 public class PositioningActivity extends Activity
 {
+    private static final String WAYPOINTS_PATH = "http://178.62.198.99:3000/waypoints.json";
+    
     private Reporter reporter;
+    
     private LocationManager locationManager;
     private SensorManager sensorManager;
+    
+    private RemoteLogger remoteLogger;
+    private InMemoryProxyLogger inMemoryProxyLogger;
     private CompositeLogger logger;
     
     private Queue<Waypoint> waypoints;
     private List<Waypoint> finishedWaypoints;
-    
-    private static final String WAYPOINTS_PATH = "http://178.62.198.99:3000/waypoints.json";
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -36,12 +41,15 @@ public class PositioningActivity extends Activity
         
         this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         this.sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+    
+        remoteLogger = new RemoteLogger();
+        inMemoryProxyLogger = new InMemoryProxyLogger();
         
         this.logger = new CompositeLogger();
         this.logger.add(new ConsoleLogger());
         this.logger.add(new FileLogger());
-        this.logger.add(new RemoteLogger());
-        this.logger.add(new InMemoryProxyLogger());
+        this.logger.add(remoteLogger);
+        this.logger.add(inMemoryProxyLogger);
         
         new WaypointTask().execute();
         
@@ -217,8 +225,15 @@ public class PositioningActivity extends Activity
             {
                 TextView next = (TextView) findViewById(R.id.next);
                 next.setText("Done");
+    
+                String currentReporterTag = reporter.getTag();
+                List<Waypoint> loggedWaypoints = inMemoryProxyLogger.getLoggedWaypoints(currentReporterTag);
                 
-                
+                for (Waypoint measuredWaypoint : loggedWaypoints)
+                {
+                    Waypoint actualWaypoint = Waypoint.interpolate(finishedWaypoints, measuredWaypoint.getTimestamp());
+                    remoteLogger.log(currentReporterTag + "-Actual", LocationPrinter.convertToString(actualWaypoint));
+                }
             }
         }
     }

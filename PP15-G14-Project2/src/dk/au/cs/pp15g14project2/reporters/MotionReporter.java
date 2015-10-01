@@ -91,4 +91,9 @@ public class MotionReporter implements Reporter
     {
         sensorManager.unregisterListener(stepListener);
     }
+    
+    public String getTag()
+    {
+        return TAG;
+    }
 }

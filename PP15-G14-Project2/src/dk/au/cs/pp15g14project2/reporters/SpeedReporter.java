@@ -65,4 +65,9 @@ public class SpeedReporter implements Reporter
     {
         isRunning = false;
     }
+    
+    public String getTag()
+    {
+        return TAG;
+    }
 }

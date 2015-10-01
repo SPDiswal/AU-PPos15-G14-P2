@@ -59,4 +59,9 @@ public class TimeReporter implements Reporter
     {
         locationManager.removeUpdates(listener);
     }
+    
+    public String getTag()
+    {
+        return TAG;
+    }
 }

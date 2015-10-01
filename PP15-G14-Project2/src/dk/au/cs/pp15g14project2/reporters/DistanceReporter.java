@@ -55,4 +55,9 @@ public class DistanceReporter implements Reporter
     public void stopListeningForUpdates() {
         locationManager.removeUpdates(listener);
     }
+    
+    public String getTag()
+    {
+        return TAG;
+    }
 }

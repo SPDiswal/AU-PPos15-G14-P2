@@ -5,4 +5,6 @@ public interface Reporter
     void startListeningForUpdates();
     
     void stopListeningForUpdates();
+    
+    String getTag();
 }
