@@ -29,10 +29,12 @@ public class Waypoint
         this.timestamp = timestamp;
     }
     
-    public static Waypoint interpolate(List<Waypoint> waypoints, Time time)
+    public static Waypoint interpolate(final List<Waypoint> waypoints, final Time time)
     {
         if(waypoints.get(0).getTimestamp().after(time)){
-            return waypoints.get(0);
+            Waypoint result = waypoints.get(0);
+            result.setTimestamp(time);
+            return result;
         }
         for (int i = 1; i < waypoints.size(); i++) {
             Waypoint secondWaypoint = waypoints.get(i);
@@ -50,7 +52,9 @@ public class Waypoint
                                         firstWaypoint.getAltitude() - altitudeDifference*differencePercentage, time);
             }
         }
-        return waypoints.get(waypoints.size()-1);
+        Waypoint result = waypoints.get(waypoints.size() - 1);
+        result.setTimestamp(time);
+        return result;
     }
     
     public String getName()
