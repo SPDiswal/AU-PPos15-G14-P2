@@ -11,37 +11,71 @@ public class MotionReporter implements Reporter
     private static final String TAG = "MotionReporter";
     private static final String GPS = LocationManager.GPS_PROVIDER;
     
+    private static final double GRAVITY = 9.81;
+    private static final int STEP_THRESHOLD = 2;
+    private static final double STEP_LENGTH = 0.75;
+    
     private final SensorManager sensorManager;
-    private final LocationManager locationManager;
-    private final int distanceInterval;
-    private LocationListener listener;
+    private final SensorEventListener stepListener;
+    
+    private boolean hasStepped = false;
+    private int stepCount = 0;
     
     public MotionReporter(final SensorManager sensorManager,
                           final LocationManager locationManager,
                           final Logger logger,
-                          int distanceInterval)
+                          final int distanceThreshold)
     {
-        this.distanceInterval = distanceInterval;
         this.sensorManager = sensorManager;
-        this.locationManager = locationManager;
-        this.listener = new LocationListener()
+        
+        this.stepListener = new SensorEventListener()
         {
-            public void onLocationChanged(final Location location)
+            public void onSensorChanged(SensorEvent event)
             {
-                logger.log(TAG, LocationPrinter.convertToString(location));
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
                 
-                locationManager.removeUpdates(this);
+                double norm = Math.sqrt(x * x + y * y + z * z);
+                double normWithoutGravity = norm - GRAVITY;
+                
+                if (normWithoutGravity > STEP_THRESHOLD && !hasStepped)
+                {
+                    hasStepped = true;
+                    stepCount++;
+                    
+                    if (stepCount * STEP_LENGTH >= distanceThreshold)
+                    {
+                        stepCount = 0;
+                        locationManager.requestSingleUpdate(GPS, new LocationListener()
+                        {
+                            public void onLocationChanged(final Location location)
+                            {
+                                logger.log(TAG, LocationPrinter.convertToString(location));
+                            }
+                            
+                            public void onStatusChanged(final String provider, final int status, final Bundle extras)
+                            {
+                            }
+                            
+                            public void onProviderEnabled(final String provider)
+                            {
+                            }
+                            
+                            public void onProviderDisabled(final String provider)
+                            {
+                            }
+                        }, null);
+                    }
+                }
+                
+                if (normWithoutGravity < 0)
+                {
+                    hasStepped = false;
+                }
             }
             
-            public void onStatusChanged(final String provider, final int status, final Bundle extras)
-            {
-            }
-            
-            public void onProviderEnabled(final String provider)
-            {
-            }
-            
-            public void onProviderDisabled(final String provider)
+            public void onAccuracyChanged(Sensor sensor, int accuracy)
             {
             }
         };
@@ -49,33 +83,12 @@ public class MotionReporter implements Reporter
     
     public void startListeningForUpdates()
     {
-        // TODO Get speed estimate (e.g. by retrieving three GPS fixes initially and using location.getSpeed()).
-        
-        Sensor linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        
-        // TODO Listen for motion changes with linear acceleration and derive acceleration (m/s^2).
-        
-        sensorManager.registerListener(new SensorEventListener()
-        {
-            public void onSensorChanged(SensorEvent event)
-            {
-                throw new UnsupportedOperationException();
-            }
-            
-            public void onAccuracyChanged(Sensor sensor, int accuracy)
-            {
-                throw new UnsupportedOperationException();
-            }
-        }, linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        
-        // TODO Derive 'optimal' time and distance interval from speed and acceleration.
-        // TODO Listen for position changes until deceleration.
-        
-        locationManager.requestLocationUpdates(GPS, 0, 0, listener);
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(stepListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
     
     public void stopListeningForUpdates()
     {
-        locationManager.removeUpdates(listener);
+        sensorManager.unregisterListener(stepListener);
     }
 }

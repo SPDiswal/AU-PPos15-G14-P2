@@ -15,6 +15,8 @@ public class SpeedReporter implements Reporter
     private final LocationManager locationManager;
     private final LocationListener listener;
     
+    private boolean isRunning = false;
+    
     public SpeedReporter(final LocationManager locationManager,
                          final Logger logger,
                          final int distanceThreshold /* metres */,
@@ -26,15 +28,9 @@ public class SpeedReporter implements Reporter
         this.locationManager = locationManager;
         this.listener = new LocationListener()
         {
-            private Location recentFix;
-    
             public void onLocationChanged(final Location location)
             {
-                if (recentFix == null || location.distanceTo(recentFix) >= distanceThreshold)
-                {
-                    recentFix = location;
-                    logger.log(TAG, LocationPrinter.convertToString(location));
-                }
+                logger.log(TAG, LocationPrinter.convertToString(location));
             }
             
             public void onStatusChanged(final String provider, final int status, final Bundle extras)
@@ -53,19 +49,20 @@ public class SpeedReporter implements Reporter
     
     public void startListeningForUpdates()
     {
+        isRunning = true;
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable()
         {
             public void run()
             {
                 locationManager.requestSingleUpdate(GPS, listener, null);
-                handler.postDelayed(this, derivedTimeInterval);
+                if (isRunning) handler.postDelayed(this, derivedTimeInterval);
             }
         }, derivedTimeInterval);
     }
     
     public void stopListeningForUpdates()
     {
-        locationManager.removeUpdates(listener);
+        isRunning = false;
     }
 }
