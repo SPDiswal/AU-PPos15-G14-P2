@@ -82,30 +82,32 @@ router.post("/", function (request, response, next)
 function kmlStart()
 {
     return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-           "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n";
+           "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n" +
+           "\t<Document>\n";
 }
 
 function kmlElement(location)
 {
-    return "\t<Placemark>\n" +
-           "\t<name>Simple placemark</name>\n" + // TODO
-           "\t<description>An interesting location</description>\n" + // TODO
-           "\t<Point>\n" +
-           "\t\t<coordinates>" +
-           location.latitude + "," + location.longitude +
+    return "\t\t<Placemark>\n" +
+           "\t\t<name>Simple placemark</name>\n" + // TODO
+           "\t\t<description>An interesting location</description>\n" + // TODO
+           "\t\t<Point>\n" +
+           "\t\t\t<coordinates>" +
+           location.longitude + "," + location.latitude + "," + location.altitude +
            "</coordinates>\n" +
-           "\t</Point>\n" +
-           "\t<TimeStamp>\n" +
-           "\t\t<when>" +
+           "\t\t</Point>\n" +
+           "\t\t<TimeStamp>\n" +
+           "\t\t\t<when>" +
            location.time +
            "</when>\n" +
-           "\t</TimeStamp>\n" +
-           "\t</Placemark>\n";
+           "\t\t</TimeStamp>\n" +
+           "\t\t</Placemark>\n";
 }
 
 function kmlEnd()
 {
-    return "</kml>";
+    return "\t</Document>\n" +
+           "</kml>";
 }
 
 module.exports = router;
