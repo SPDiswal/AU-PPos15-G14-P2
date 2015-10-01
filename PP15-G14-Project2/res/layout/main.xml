@@ -32,18 +32,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/blank1" android:layout_gravity="center_horizontal"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="You&apos;ve been here most recently"
+            android:id="@+id/recentLabel" android:layout_gravity="center_horizontal"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Loading waypoints"
             android:id="@+id/mostRecent" android:layout_gravity="center_horizontal"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/next" android:layout_gravity="center_horizontal"/>
-    <Button
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/blank2" android:layout_gravity="center_horizontal"/>
+    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next waypoint"
-            android:id="@+id/waypoint" android:layout_gravity="center_horizontal"
-            android:onClick="onClickingForNextWaypoint"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="You&apos;ll be here next"
+            android:id="@+id/nextLabel" android:layout_gravity="center_horizontal"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/next" android:layout_gravity="center_horizontal"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/blank3" android:layout_gravity="center_horizontal"/>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_gravity="bottom|center_horizontal">
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I&apos;m there now!"
+                android:id="@+id/waypoint" android:layout_gravity="center_horizontal"
+                android:onClick="onClickingForNextWaypoint"
+                android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
+                android:layout_marginBottom="50dp"/>
+    </RelativeLayout>
 </LinearLayout>
 
