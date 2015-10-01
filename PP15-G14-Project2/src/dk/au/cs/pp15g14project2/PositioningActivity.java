@@ -41,7 +41,7 @@ public class PositioningActivity extends Activity
         
         this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         this.sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-    
+        
         remoteLogger = new RemoteLogger();
         inMemoryProxyLogger = new InMemoryProxyLogger();
         
@@ -99,8 +99,6 @@ public class PositioningActivity extends Activity
                 }
                 break;
         }
-        
-        if (reporter != null) reporter.startListeningForUpdates();
     }
     
     private class WaypointTask extends AsyncTask<Void, Void, Queue<Waypoint>>
@@ -205,14 +203,22 @@ public class PositioningActivity extends Activity
     
     public void onClickingForNextWaypoint(View view)
     {
+        if (reporter == null)
+        {
+            Toast.makeText(this, "Choose a reporter first!", Toast.LENGTH_LONG).show();
+            return;
+        }
+    
         Time timestamp = new Time();
         timestamp.setToNow();
+    
+        reporter.startListeningForUpdates();
         
         if (!waypoints.isEmpty())
         {
             waypoints.peek().setTimestamp(timestamp);
             finishedWaypoints.add(waypoints.peek());
-    
+            
             TextView mostRecent = (TextView) findViewById(R.id.mostRecent);
             mostRecent.setText(waypoints.poll().getName());
             
@@ -225,15 +231,24 @@ public class PositioningActivity extends Activity
             {
                 TextView next = (TextView) findViewById(R.id.next);
                 next.setText("Done");
-    
+                
                 String currentReporterTag = reporter.getTag();
                 List<Waypoint> loggedWaypoints = inMemoryProxyLogger.getLoggedWaypoints(currentReporterTag);
+                
+                if (loggedWaypoints == null)
+                {
+                    Toast.makeText(this, "No measurements :(", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 
                 for (Waypoint measuredWaypoint : loggedWaypoints)
                 {
                     Waypoint actualWaypoint = Waypoint.interpolate(finishedWaypoints, measuredWaypoint.getTimestamp());
                     remoteLogger.log(currentReporterTag + "-Actual", LocationPrinter.convertToString(actualWaypoint));
                 }
+                
+                reporter.stopListeningForUpdates();
+                Toast.makeText(this, "Interpolated :)", Toast.LENGTH_LONG).show();
             }
         }
     }

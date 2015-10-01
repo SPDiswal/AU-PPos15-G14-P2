@@ -1,6 +1,7 @@
 package dk.au.cs.pp15g14project2.loggers;
 
 import android.text.format.Time;
+import android.util.Log;
 import dk.au.cs.pp15g14project2.Waypoint;
 
 import java.util.*;
@@ -32,6 +33,8 @@ public class InMemoryProxyLogger implements Logger
         
         if (!loggedWaypoints.containsKey(tag))
             loggedWaypoints.put(tag, new ArrayList<Waypoint>());
+    
+        Log.d("InMemoryProxyLogger", tag);
         
         loggedWaypoints.get(tag).add(new Waypoint("Measured", latitude, longitude, altitude, time));
     }
