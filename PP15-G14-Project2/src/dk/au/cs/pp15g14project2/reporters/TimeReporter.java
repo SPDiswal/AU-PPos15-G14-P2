@@ -2,6 +2,8 @@ package dk.au.cs.pp15g14project2.reporters;
 
 import android.location.*;
 import android.os.Bundle;
+import android.os.Handler;
+import dk.au.cs.pp15g14project2.R;
 import dk.au.cs.pp15g14project2.loggers.Logger;
 import dk.au.cs.pp15g14project2.utilities.LocationPrinter;
 
@@ -25,6 +27,13 @@ public class TimeReporter implements Reporter
             public void onLocationChanged(final Location location)
             {
                 logger.log(TAG, LocationPrinter.convertToString(location));
+                Handler handler = new Handler();
+                locationManager.removeUpdates(this);
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        locationManager.requestLocationUpdates(GPS, 0, 0, listener);
+                    }
+                }, TimeReporter.this.timeInterval);
             }
             
             public void onStatusChanged(final String provider, final int status, final Bundle extras)
@@ -43,7 +52,7 @@ public class TimeReporter implements Reporter
     
     public void listenForUpdates()
     {
-        locationManager.requestLocationUpdates(GPS, timeInterval, 0, listener);
+        locationManager.requestLocationUpdates(GPS, 0, 0, listener);
     }
     
     public void stopListeningForUpdates()
