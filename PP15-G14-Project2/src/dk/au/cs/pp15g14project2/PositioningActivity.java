@@ -208,10 +208,13 @@ public class PositioningActivity extends Activity
             Toast.makeText(this, "Choose a reporter first!", Toast.LENGTH_LONG).show();
             return;
         }
-    
+        
         Time timestamp = new Time();
         timestamp.setToNow();
     
+        TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
+        waypointButton.setText("I'm there now!");
+        
         reporter.startListeningForUpdates();
         
         if (!waypoints.isEmpty())
@@ -249,6 +252,8 @@ public class PositioningActivity extends Activity
                 
                 reporter.stopListeningForUpdates();
                 Toast.makeText(this, "Interpolated :)", Toast.LENGTH_LONG).show();
+                
+                waypointButton.setText("No more waypoints");
             }
         }
     }
