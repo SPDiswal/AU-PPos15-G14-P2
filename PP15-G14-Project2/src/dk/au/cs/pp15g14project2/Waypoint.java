@@ -31,8 +31,26 @@ public class Waypoint
     
     public static Waypoint interpolate(List<Waypoint> waypoints, Time time)
     {
-        
-        throw new UnsupportedOperationException();
+        if(waypoints.get(0).getTimestamp().after(time)){
+            return waypoints.get(0);
+        }
+        for (int i = 1; i < waypoints.size(); i++) {
+            Waypoint secondWaypoint = waypoints.get(i);
+            if(secondWaypoint.getTimestamp().after(time)){
+                Waypoint firstWaypoint = waypoints.get(i - 1);
+                double timeDifference1 = secondWaypoint.getTimestamp().toMillis(false) - firstWaypoint.getTimestamp().toMillis(false);
+                double timeDifference2 = time.toMillis(false) - firstWaypoint.getTimestamp().toMillis(false);
+                double differencePercentage = timeDifference2/timeDifference1;
+                double latitudeDifference = firstWaypoint.getLatitude() - secondWaypoint.getLatitude();
+                double longitudeDifference = firstWaypoint.getLongitude() - secondWaypoint.getLongitude();
+                double altitudeDifference = firstWaypoint.getAltitude() - secondWaypoint.getAltitude();
+                return new Waypoint("Interpolated",
+                                        firstWaypoint.getLatitude() - latitudeDifference*differencePercentage,
+                                        firstWaypoint.getLongitude() - longitudeDifference*differencePercentage,
+                                        firstWaypoint.getAltitude() - altitudeDifference*differencePercentage, time);
+            }
+        }
+        return waypoints.get(waypoints.size()-1);
     }
     
     public String getName()
