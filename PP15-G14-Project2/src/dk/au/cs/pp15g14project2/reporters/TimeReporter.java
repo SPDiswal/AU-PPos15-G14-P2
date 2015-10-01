@@ -41,7 +41,7 @@ public class TimeReporter implements Reporter
         };
     }
     
-    public void listenForUpdates()
+    public void startListeningForUpdates()
     {
         locationManager.requestLocationUpdates(GPS, timeInterval, 0, listener);
     }
