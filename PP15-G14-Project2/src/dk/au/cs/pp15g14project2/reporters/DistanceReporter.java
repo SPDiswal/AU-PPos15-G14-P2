@@ -13,7 +13,10 @@ public class DistanceReporter implements Reporter
     
     private final LocationManager locationManager;
     private final LocationListener listener;
-
+    
+    private int numberOfGpsFixes = 0;
+    private int numberOfLogs = 0;
+    
     public DistanceReporter(final LocationManager locationManager,
                             final Logger logger,
                             final int distanceThreshold /* metres */)
@@ -25,9 +28,12 @@ public class DistanceReporter implements Reporter
             
             public void onLocationChanged(final Location location)
             {
+                numberOfGpsFixes++;
+                
                 if (recentFix == null || location.distanceTo(recentFix) >= distanceThreshold)
                 {
                     recentFix = location;
+                    numberOfLogs++;
                     logger.log(TAG, LocationPrinter.convertToString(location));
                 }
             }
@@ -63,11 +69,11 @@ public class DistanceReporter implements Reporter
     
     public int getNumberOfGpsFixes()
     {
-        throw new UnsupportedOperationException();
+        return numberOfGpsFixes;
     }
     
     public int getNumberOfLogs()
     {
-        throw new UnsupportedOperationException();
+        return numberOfLogs;
     }
 }
