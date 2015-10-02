@@ -27,6 +27,7 @@ public class PositioningActivity extends Activity
     private LocationManager locationManager;
     private SensorManager sensorManager;
     
+    private FileLogger fileLogger;
     private RemoteLogger remoteLogger;
     private InMemoryProxyLogger inMemoryProxyLogger;
     private CompositeLogger logger;
@@ -42,12 +43,14 @@ public class PositioningActivity extends Activity
         this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         this.sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
         
+        fileLogger = new FileLogger();
         remoteLogger = new RemoteLogger();
         inMemoryProxyLogger = new InMemoryProxyLogger();
         
         this.logger = new CompositeLogger();
         this.logger.add(new ConsoleLogger());
-        this.logger.add(new FileLogger());
+        
+        this.logger.add(fileLogger);
         this.logger.add(remoteLogger);
         this.logger.add(inMemoryProxyLogger);
         
@@ -216,16 +219,16 @@ public class PositioningActivity extends Activity
         {
             RadioButton timeReporter = (RadioButton) findViewById(R.id.timeReporter);
             timeReporter.setEnabled(false);
-    
+            
             RadioButton distanceReporter = (RadioButton) findViewById(R.id.distanceReporter);
             distanceReporter.setEnabled(false);
-    
+            
             RadioButton speedReporter = (RadioButton) findViewById(R.id.speedReporter);
             speedReporter.setEnabled(false);
-    
+            
             RadioButton motionReporter = (RadioButton) findViewById(R.id.motionReporter);
             motionReporter.setEnabled(false);
-    
+            
             TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
             waypointButton.setText("I'm there now!");
             reporter.startListeningForUpdates();
@@ -250,7 +253,7 @@ public class PositioningActivity extends Activity
                 
                 TextView next = (TextView) findViewById(R.id.next);
                 next.setText("Done");
-    
+                
                 TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
                 waypointButton.setText("No more waypoints");
                 
@@ -282,8 +285,9 @@ public class PositioningActivity extends Activity
                                    + " " + reporter.getNumberOfLogs()
                                    + " " + ((double) reporter.getNumberOfLogs() / timeSpan);
                     
+                    fileLogger.log(currentReporterTag + "-Stats", stats);
                     remoteLogger.log(currentReporterTag + "-Stats", stats);
-    
+                    
                     Toast.makeText(this, "Mission accomplished :)", Toast.LENGTH_LONG).show();
                 }
                 else
