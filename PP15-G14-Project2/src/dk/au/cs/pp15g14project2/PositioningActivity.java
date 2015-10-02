@@ -211,7 +211,7 @@ public class PositioningActivity extends Activity
         
         Time timestamp = new Time();
         timestamp.setToNow();
-    
+        
         if (finishedWaypoints.isEmpty())
         {
             TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
@@ -251,10 +251,10 @@ public class PositioningActivity extends Activity
                     Waypoint actualWaypoint = Waypoint.interpolate(finishedWaypoints, measuredWaypoint.getTimestamp());
                     remoteLogger.log(currentReporterTag + "-Actual", LocationPrinter.convertToString(actualWaypoint));
                 }
-    
+                
                 reporter.stopListeningForUpdates();
                 Toast.makeText(this, "Interpolated :)", Toast.LENGTH_LONG).show();
-    
+                
                 TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
                 waypointButton.setText("No more waypoints");
             }

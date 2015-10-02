@@ -60,4 +60,14 @@ public class DistanceReporter implements Reporter
     {
         return TAG;
     }
+    
+    public int getNumberOfGpsFixes()
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    public int getNumberOfLogs()
+    {
+        throw new UnsupportedOperationException();
+    }
 }

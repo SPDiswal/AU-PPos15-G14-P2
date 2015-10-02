@@ -7,4 +7,8 @@ public interface Reporter
     void stopListeningForUpdates();
     
     String getTag();
+    
+    int getNumberOfGpsFixes();
+    
+    int getNumberOfLogs();
 }
