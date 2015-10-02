@@ -10,7 +10,9 @@ public class TimeReporter implements Reporter
 {
     private static final String TAG = "TimeReporter";
     private static final String GPS = LocationManager.GPS_PROVIDER;
-    
+    private int numOfLogs = 0;
+    private int numOfFixes = 0;
+
     private final int timeInterval;
     private final LocationManager locationManager;
     private final LocationListener listener;
@@ -27,10 +29,12 @@ public class TimeReporter implements Reporter
         {
             public void onLocationChanged(final Location location)
             {
+                numOfFixes++;
                 if (isRunning)
                 {
                     locationManager.removeUpdates(this);
                     logger.log(TAG, LocationPrinter.convertToString(location));
+                    numOfLogs++;
                 }
             }
             
@@ -75,5 +79,15 @@ public class TimeReporter implements Reporter
     public String getTag()
     {
         return TAG;
+    }
+
+    @Override
+    public int getNumberOfGpsFixes() {
+        return numOfFixes;
+    }
+
+    @Override
+    public int getNumberOfLogs() {
+        return numOfLogs;
     }
 }
