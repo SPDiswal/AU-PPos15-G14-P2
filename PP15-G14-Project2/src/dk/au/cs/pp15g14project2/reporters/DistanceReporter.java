@@ -2,7 +2,6 @@ package dk.au.cs.pp15g14project2.reporters;
 
 import android.location.*;
 import android.os.Bundle;
-import android.util.Log;
 import dk.au.cs.pp15g14project2.loggers.Logger;
 import dk.au.cs.pp15g14project2.utilities.LocationPrinter;
 

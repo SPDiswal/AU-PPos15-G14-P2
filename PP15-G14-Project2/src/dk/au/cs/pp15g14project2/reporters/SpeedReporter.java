@@ -17,6 +17,9 @@ public class SpeedReporter implements Reporter
     
     private boolean isRunning = false;
     
+    private int numberOfGpsFixes = 0;
+    private int numberOfLogs = 0;
+    
     public SpeedReporter(final LocationManager locationManager,
                          final Logger logger,
                          final int distanceThreshold /* metres */,
@@ -30,6 +33,8 @@ public class SpeedReporter implements Reporter
         {
             public void onLocationChanged(final Location location)
             {
+                numberOfGpsFixes++;
+                numberOfLogs++;
                 logger.log(TAG, LocationPrinter.convertToString(location));
             }
             
@@ -69,5 +74,15 @@ public class SpeedReporter implements Reporter
     public String getTag()
     {
         return TAG;
+    }
+    
+    public int getNumberOfGpsFixes()
+    {
+        return numberOfGpsFixes;
+    }
+    
+    public int getNumberOfLogs()
+    {
+        return numberOfLogs;
     }
 }
