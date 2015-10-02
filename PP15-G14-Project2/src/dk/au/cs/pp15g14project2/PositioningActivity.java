@@ -234,8 +234,13 @@ public class PositioningActivity extends Activity
             }
             else
             {
+                reporter.stopListeningForUpdates();
+                
                 TextView next = (TextView) findViewById(R.id.next);
                 next.setText("Done");
+    
+                TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
+                waypointButton.setText("No more waypoints");
                 
                 String currentReporterTag = reporter.getTag();
                 List<Waypoint> loggedWaypoints = inMemoryProxyLogger.getLoggedWaypoints(currentReporterTag);
@@ -252,11 +257,27 @@ public class PositioningActivity extends Activity
                     remoteLogger.log(currentReporterTag + "-Actual", LocationPrinter.convertToString(actualWaypoint));
                 }
                 
-                reporter.stopListeningForUpdates();
-                Toast.makeText(this, "Interpolated :)", Toast.LENGTH_LONG).show();
+                Time startTime = finishedWaypoints.get(0).getTimestamp();
+                Time endTime = finishedWaypoints.get(finishedWaypoints.size() - 1).getTimestamp();
                 
-                TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
-                waypointButton.setText("No more waypoints");
+                long timeSpan = Math.round((endTime.toMillis(false) - startTime.toMillis(false)) / 1000);
+                
+                if (timeSpan > 0)
+                {
+                    String stats = timeSpan
+                                   + " " + reporter.getNumberOfGpsFixes()
+                                   + " " + (double) (reporter.getNumberOfGpsFixes() / timeSpan)
+                                   + " " + reporter.getNumberOfLogs()
+                                   + " " + (double) (reporter.getNumberOfLogs() / timeSpan);
+                    
+                    remoteLogger.log(currentReporterTag + "-Stats", stats);
+    
+                    Toast.makeText(this, "Mission accomplished :)", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(this, "No stats :(", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
