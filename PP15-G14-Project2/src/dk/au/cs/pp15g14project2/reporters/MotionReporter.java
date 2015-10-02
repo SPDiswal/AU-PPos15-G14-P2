@@ -21,6 +21,9 @@ public class MotionReporter implements Reporter
     private boolean hasStepped = false;
     private int stepCount = 0;
     
+    private int numberOfGpsFixes = 0;
+    private int numberOfLogs = 0;
+    
     public MotionReporter(final SensorManager sensorManager,
                           final LocationManager locationManager,
                           final Logger logger,
@@ -51,6 +54,8 @@ public class MotionReporter implements Reporter
                         {
                             public void onLocationChanged(final Location location)
                             {
+                                numberOfGpsFixes++;
+                                numberOfLogs++;
                                 logger.log(TAG, LocationPrinter.convertToString(location));
                             }
                             
@@ -95,5 +100,15 @@ public class MotionReporter implements Reporter
     public String getTag()
     {
         return TAG;
+    }
+    
+    public int getNumberOfGpsFixes()
+    {
+        return numberOfGpsFixes;
+    }
+    
+    public int getNumberOfLogs()
+    {
+        return numberOfLogs;
     }
 }
