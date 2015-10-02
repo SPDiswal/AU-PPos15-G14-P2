@@ -67,8 +67,6 @@ public class TimeReporter implements Reporter
                 }
             }
         }, timeInterval);
-    
-        Log.e(TAG, "" + timeInterval);
     }
     
     public void stopListeningForUpdates()
