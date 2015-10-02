@@ -214,6 +214,18 @@ public class PositioningActivity extends Activity
         
         if (finishedWaypoints.isEmpty())
         {
+            RadioButton timeReporter = (RadioButton) findViewById(R.id.timeReporter);
+            timeReporter.setEnabled(false);
+    
+            RadioButton distanceReporter = (RadioButton) findViewById(R.id.distanceReporter);
+            distanceReporter.setEnabled(false);
+    
+            RadioButton speedReporter = (RadioButton) findViewById(R.id.speedReporter);
+            speedReporter.setEnabled(false);
+    
+            RadioButton motionReporter = (RadioButton) findViewById(R.id.motionReporter);
+            motionReporter.setEnabled(false);
+    
             TextView waypointButton = (TextView) findViewById(R.id.waypointButton);
             waypointButton.setText("I'm there now!");
             reporter.startListeningForUpdates();
@@ -266,9 +278,9 @@ public class PositioningActivity extends Activity
                 {
                     String stats = timeSpan
                                    + " " + reporter.getNumberOfGpsFixes()
-                                   + " " + (double) (reporter.getNumberOfGpsFixes() / timeSpan)
+                                   + " " + ((double) reporter.getNumberOfGpsFixes() / timeSpan)
                                    + " " + reporter.getNumberOfLogs()
-                                   + " " + (double) (reporter.getNumberOfLogs() / timeSpan);
+                                   + " " + ((double) reporter.getNumberOfLogs() / timeSpan);
                     
                     remoteLogger.log(currentReporterTag + "-Stats", stats);
     

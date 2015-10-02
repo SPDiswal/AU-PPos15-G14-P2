@@ -12,6 +12,8 @@ router.get("/", function (request, response, next)
     
     //console.log("-> Incoming GET request: " + JSON.stringify(request.params));
     
+    var output;
+    
     file.exists(logFilename, function (exists)
     {
         if (exists)
@@ -25,18 +27,27 @@ router.get("/", function (request, response, next)
                 else
                 {
                     var lines = data.split("\n");
-                    var output = kmlStart();
                     
-                    for (var i in lines)
+                    if (endsWith(reporter, "-Stats"))
                     {
-                        if (lines[i] !== "")
-                        {
-                            output += kmlElement(JSON.parse(lines[i]));
-                        }
+                        output = lines[0];
+                        response.header("Content-Type", "application/json").send(output);
                     }
-                    
-                    output += kmlEnd();
-                    response.header("Content-Type", "text/xml").send(output);
+                    else
+                    {
+                        output = kmlStart();
+                        
+                        for (var i in lines)
+                        {
+                            if (lines[i] !== "")
+                            {
+                                output += kmlElement(JSON.parse(lines[i]));
+                            }
+                        }
+                        
+                        output += kmlEnd();
+                        response.header("Content-Type", "text/xml").send(output);
+                    }
                 }
             });
         }
@@ -49,34 +60,62 @@ router.get("/", function (request, response, next)
 
 router.post("/", function (request, response, next)
 {
-    var latitude = request.body.latitude;
-    var longitude = request.body.longitude;
-    var altitude = request.body.altitude;
-    var time = request.body.time;
     var reporter = request.params.reporter;
+    var output = {};
     
-    //console.log("-> Incoming POST request (" + reporter + "): " + JSON.stringify(request.body));
-    
-    if (!latitude || !longitude || !altitude || !time || !reporter)
+    if (!reporter)
     {
         response.sendStatus(400);
+        return;
+    }
+    
+    if (endsWith(reporter, "-Stats"))
+    {
+        var timespan = request.body["timespan"];
+        var gpsFixes = request.body["gps-fixes"];
+        var gpsFixesPerSecond = request.body["gps-fixes-per-second"];
+        var logs = request.body["logs"];
+        var logsPerSecond = request.body["logs-per-second"];
+        
+        if (!timespan || !gpsFixes || !gpsFixesPerSecond || !logs || !logsPerSecond)
+        {
+            response.sendStatus(400);
+            return;
+        }
+        
+        output["timespan"] = timespan;
+        output["gps-fixes"] = gpsFixes;
+        output["gps-fixes-per-second"] = gpsFixesPerSecond;
+        output["logs"] = logs;
+        output["logs-per-second"] = logsPerSecond;
     }
     else
     {
-        var output = {
-            latitude:  latitude,
-            longitude: longitude,
-            altitude:  altitude,
-            time:      time
-        };
+        var latitude = request.body["latitude"];
+        var longitude = request.body["longitude"];
+        var altitude = request.body["altitude"];
+        var time = request.body["time"];
         
-        var logFilename = logFilenamePrefix + reporter + logFilenameSuffix;
-        
-        file.appendFile(logFilename, JSON.stringify(output) + "\n", function ()
+        if (!latitude || !longitude || !altitude || !time)
         {
-            response.sendStatus(204);
-        });
+            response.sendStatus(400);
+            return;
+        }
+        
+        output["latitude"] = latitude;
+        output["longitude"] = longitude;
+        output["altitude"] = altitude;
+        output["time"] = time;
     }
+    
+    //console.log("-> Incoming POST request (" + reporter + "): " + JSON.stringify(request.body));
+    
+    var logFilename = logFilenamePrefix + reporter + logFilenameSuffix;
+    
+    file.appendFile(logFilename, JSON.stringify(output) + "\n", function ()
+    {
+        response.sendStatus(204);
+    });
 });
 
 function kmlStart()
@@ -108,6 +147,11 @@ function kmlEnd()
 {
     return "\t</Document>\n" +
            "</kml>";
+}
+
+function endsWith(str, suffix)
+{
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
 
 module.exports = router;

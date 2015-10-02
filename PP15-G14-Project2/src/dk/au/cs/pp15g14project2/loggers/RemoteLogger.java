@@ -28,10 +28,23 @@ public class RemoteLogger implements Logger
             
             try
             {
-                JSONObject json = new JSONObject().put("latitude", tokens[1])
-                                                  .put("longitude", tokens[2])
-                                                  .put("altitude", tokens[3])
-                                                  .put("time", tokens[0]);
+                JSONObject json;
+                
+                if (tokens.length == 4)
+                {
+                    json = new JSONObject().put("latitude", tokens[1])
+                                           .put("longitude", tokens[2])
+                                           .put("altitude", tokens[3])
+                                           .put("time", tokens[0]);
+                }
+                else
+                {
+                    json = new JSONObject().put("timespan", tokens[0])
+                                           .put("gps-fixes", tokens[1])
+                                           .put("gps-fixes-per-second", tokens[2])
+                                           .put("logs", tokens[3])
+                                           .put("logs-per-second", tokens[4]);
+                }
                 
                 String remotePath = REMOTE_PATH_PREFIX + tag + "/";
                 URL url = new URL(remotePath);
