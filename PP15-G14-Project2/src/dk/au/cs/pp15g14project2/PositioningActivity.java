@@ -48,8 +48,8 @@ public class PositioningActivity extends Activity
         inMemoryProxyLogger = new InMemoryProxyLogger();
         
         this.logger = new CompositeLogger();
-        this.logger.add(new ConsoleLogger());
         
+        this.logger.add(new ConsoleLogger());
         this.logger.add(fileLogger);
         this.logger.add(remoteLogger);
         this.logger.add(inMemoryProxyLogger);
